@@ -1,6 +1,6 @@
 # nodejs-course
 
-Complete NodeJS course with express, socket.io and MongoDB, **Kim Chen**, [Udemy](https://github.com/displaygreat/displaygreat/blob/main/udemy-logo.png)
+Complete NodeJS course with express, socket.io and MongoDB, **Kim Chen**, **Udemy**
 
 ### Technologies:
 - Node JS
