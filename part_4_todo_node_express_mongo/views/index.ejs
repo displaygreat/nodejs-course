@@ -65,7 +65,7 @@
           let result = await response.json()
           edit_form.reset();
           window.location.reload();
-          alert(alert(result.msg))
+          alert(result.msg);
         }
 
         itemContainer.onclick = function (e) {
@@ -76,6 +76,15 @@
           if (e.target.textContent === 'delete') {
             const id = e.target.getAttribute('data-id');
             console.log(id);
+            const endpoint = `/items/${id}`;
+            fetch(endpoint, {
+              method: 'DELETE'
+            }).then(res => res.json()).
+              then(data => {
+                console.log('data', data)
+                window.location.href = data.redirect
+              }).
+              catch(err => console.log(err))
           }
         }
       </script>
