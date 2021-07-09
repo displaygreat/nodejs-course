@@ -1,5 +1,7 @@
 const express = require("express");
 const app = express();
+
+app.use(express.urlencoded({ extended: true }));
 const mongoose = require("mongoose");
 const config = require("./config");
 const mongodb = config.MONGODB_CONNECTION;
@@ -14,39 +16,53 @@ mongoose
   .catch((err) => console.log(err));
 app.set("view engine", "ejs");
 
-app.get("/create-item", (req, res) => {
-  const item = new Item({
-    name: "headphones",
-    price: 500,
-  });
-  item
-    .save()
-    .then((result) => res.send(result))
-    .catch((err) => console.log(err));
+app.get("/", function (req, res) {
+  res.redirect("/get-items");
 });
 
 app.get("/get-items", (req, res) => {
   Item.find()
-    .then((result) => res.send(result))
+    .then((result) => {
+      res.render("index", { items: result });
+    })
     .catch((err) => console.log(err));
 });
 
-app.get("/get-item", (req, res) => {
-  Item.findById("60e0ca096b98601cb45f7155")
-    .then((result) => res.send(result))
-    .catch((err) => console.log(err));
-});
-
-app.get("/", function (req, res) {
-  const items = [
-    { name: "mobile phone", price: 1000 },
-    { name: "book", price: 30 },
-    { name: "computer", price: 2000 },
-  ];
-  res.render("index", { items });
-});
 app.get("/add-item", function (req, res) {
   res.render("add-item");
+});
+
+app.post("/items", (req, res) => {
+  console.log(req.body);
+  const item = Item(req.body);
+  item
+    .save()
+    .then(() => {
+      res.redirect("/get-items");
+    })
+    .catch((err) => console.log(err));
+});
+
+app.get("/items/:id", (req, res) => {
+  const id = req.params.id;
+  Item.findById(id).then((result) => {
+    console.log("result", result);
+    res.render("item-details", { item: result });
+  });
+});
+
+app.delete("/items/:id", (req, res) => {
+  const id = req.params.id;
+  Item.findByIdAndDelete(id).then((result) => {
+    res.json({ redirect: "/get-items" });
+  });
+});
+
+app.put("/items/:id", (req, res) => {
+  const id = req.params.id;
+  Item.findByIdAndUpdate(id, req.body).then((result) => {
+    res.json({ msg: "Updated successfully" });
+  });
 });
 
 app.use((req, res) => {
